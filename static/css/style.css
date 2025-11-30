@@ -448,3 +448,11 @@ footer {
   background: #f0f8ff;
   color: #005fa3;
 }
+
+.hello-profile {
+    width: 55px;
+    height: 55px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    backdrop-filter: blur(3px);
+}

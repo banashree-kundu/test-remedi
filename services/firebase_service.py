@@ -41,3 +41,17 @@ def get_medicines(email):
 
 def update_medicine(email, med_id, data):
     db.collection("users").document(email).collection("medicines").document(med_id).update(data)
+
+def update_user(email, data):
+    """
+    Updates an existing user document.
+    :param email: The user's email (Document ID)
+    :param data: A dictionary of fields to update (e.g., {'age': '20', 'gender': 'male'})
+    """
+    try:
+        user_ref = db.collection("users").document(email)
+        user_ref.update(data)
+        return True
+    except Exception as e:
+        print(f"Error updating user {email}: {e}")
+        return False
