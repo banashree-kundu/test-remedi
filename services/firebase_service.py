@@ -24,7 +24,7 @@ def add_user(email, username,photo):
         "username": username,
         "email": email,
         "created_at": firestore.SERVER_TIMESTAMP,
-        "hydration_enabled": False
+        "hydration_enabled": False,
         "photo_url":photo
     })
 
