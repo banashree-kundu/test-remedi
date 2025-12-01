@@ -148,12 +148,12 @@ def google_login():
 @app.route('/api/get_firebase_config', methods=['GET'])
 def get_firebase_config():
     firebase_config = {
-        "apiKey": os.getenv("FIREBASE_API_KEY"),
-        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
-        "projectId": os.getenv("FIREBASE_PROJECT_ID"),
-        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
-        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
-        "appId": os.getenv("FIREBASE_APP_ID"),
+        "apiKey": os.environ.get("FIREBASE_API_KEY"),
+        "authDomain": os.environ.get("FIREBASE_AUTH_DOMAIN"),
+        "projectId": os.environ.get("FIREBASE_PROJECT_ID"),
+        "storageBucket": os.environ.get("FIREBASE_STORAGE_BUCKET"),
+        "messagingSenderId": os.environ.get("FIREBASE_MESSAGING_SENDER_ID"),
+        "appId": os.environ.get("FIREBASE_APP_ID"),
     }
     return jsonify(firebase_config)
 @app.route('/api/upload_image', methods=['POST'])
