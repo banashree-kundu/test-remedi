@@ -314,7 +314,7 @@ def mark_taken_api():
         user_id=data['user_id'],
         schedule_id=data['schedule_id']
     )
-    return jsonify(result)
+    return result
 @app.route('/notification-action')
 def notification_action_page():
     # The HTML will read the URL parameters using JavaScript.

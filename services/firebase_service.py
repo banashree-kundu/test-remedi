@@ -142,13 +142,13 @@ def run_inventory_transaction(transaction, sched_ref, user_id):
     
     # 2. Logic to find the actual Inventory Document
     # OPTION A: If 'current_quantity' is stored directly inside the Schedule document
-    current_qty = sched_data.get('current_quantity', 0)
+    current_qty = sched_data.get('quantity', 0)
     med_name = sched_data.get('med_name')
 
     # 3. Decrement
     if current_qty > 0:
         new_qty = current_qty - 1
-        transaction.update(sched_ref, {'current_quantity': new_qty})
+        transaction.update(sched_ref, {'quantity': new_qty})
         
         # 4. LOG IT (Create a new document in 'logs')
         log_ref = db.collection('users').document(user_id).collection('logs').document()
