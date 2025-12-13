@@ -12,27 +12,26 @@ const messaging = getMessaging(app);
 if ("serviceWorker" in navigator) {
   await navigator.serviceWorker.register("/static/js/firebase-messaging-sw.js");
 }
-document.getElementById("enableNotif").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const permission = await Notification.requestPermission();
+document.addEventListener("DOMContentLoaded", async () => {
+  const btn = document.getElementById("enableNotif");
+  if (!btn) return;
 
-  if (permission !== "granted") {
-    alert("Notifications blocked");
-    return;
-  }
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
 
-  const token = await getToken(messaging, {
-    vapidKey: firebaseConfig.vapidKey
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
+
+    const token = await getToken(messaging, {
+      vapidKey: firebaseConfig.vapidKey
+    });
+
+    await fetch("/save-fcm-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+    alert("Notifications enabled ✅");
   });
-
-  console.log("FCM Token:", token);
-
-  // Send token to backend
-  await fetch("/save-fcm-token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token })
-  });
-
-  alert("Notifications enabled!");
 });
