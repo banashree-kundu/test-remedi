@@ -300,6 +300,11 @@ def notification_action_page():
     # The HTML will read the URL parameters using JavaScript.
     return render_template('notification_action.html')
 
+@app.route("/firebase-messaging-sw.js")
+def sw():
+    return send_from_directory("static", "firebase-messaging-sw.js")
+
+
 @app.route('/save_schedule', methods=['POST'])
 def save_schedule():
     data=request.json()
