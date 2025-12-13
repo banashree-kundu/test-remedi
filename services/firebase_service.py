@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
 import os,json
+from flask import jsonify
 firebase_creds = os.environ.get("FIREBASE_CONFIG")
 
 if firebase_creds:
