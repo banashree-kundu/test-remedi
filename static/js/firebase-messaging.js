@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
-import { onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("enableNotif");
@@ -39,23 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({ token })
     });
 
+    // ✅ REGISTER FOREGROUND HANDLER HERE
+  messaging.onMessage(messaging, (payload) => {
+    console.log("FOREGROUND PAYLOAD:", payload);
+
+    navigator.serviceWorker.ready.then((reg) => {
+      reg.showNotification("Medicine Reminder", {
+        body: `Time to take ${payload.data.med_name}`,
+        icon: "/static/images/titleicon.png",
+        data: payload.data
+      });
+    });
+  });
+
     alert("Notifications enabled ✅");
   });
-});
-
-onMessage(messaging, (payload) => {
-  console.log("FOREGROUND MESSAGE:", payload);
-
-  if (Notification.permission === "granted") {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(
-        payload.notification.title,
-        {
-          body: payload.notification.body,
-          icon: "/static/images/titleicon.png",
-          data: payload.data
-        }
-      );
-    });
-  }
 });

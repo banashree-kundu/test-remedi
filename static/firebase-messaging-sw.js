@@ -8,19 +8,19 @@ const messaging = firebase.messaging();
 
 // 1. DISPLAY THE NOTIFICATION (When app is closed)
 messaging.onBackgroundMessage((payload) => {
-  const notificationTitle = payload.notification.title;
-  
+  console.log("BG payload:", payload);
+
+  const notificationTitle = payload.data.med_name
+    ? "Medicine Reminder"
+    : "Reminder";
+
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/static/images/titleicon.png',
-    
-    // Pass the hidden data to the notification object
+    body: `Time to take ${payload.data.med_name}`,
+    icon: "/static/images/titleicon.png",
     data: payload.data,
-    
-    // DEFINE THE SMALL BUTTONS
     actions: [
-        { action: 'mark_taken', title: '✅ Take Now' },
-        { action: 'open_page', title: '👀 View Details' }
+      { action: "mark_taken", title: "✅ Take Now" },
+      { action: "open_page", title: "👀 View Details" }
     ]
   };
 
