@@ -12,6 +12,12 @@ cron_running = False
 # Initialize Flask
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # change this before deployment
+app.config.update(
+    SESSION_COOKIE_SECURE=True,        # REQUIRED on HTTPS (Vercel)
+    SESSION_COOKIE_HTTPONLY=True,      # Security
+    SESSION_COOKIE_SAMESITE="None",    # REQUIRED for mobile Chrome
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7)
+)
 
 # Routes
 @app.route('/')
@@ -118,6 +124,7 @@ def login():
         firebase_service.add_user(email=email, username=name)
         user_data = {"email": email, "username": name, "photo_url": decoded.get("picture", "https://ik.imagekit.io/RemediRX/pngwing.com.png?updatedAt=1764494288724")}
 
+    session.permanent = True
     session["user"] = user_data
     return jsonify({"success": True})
 
@@ -148,6 +155,7 @@ def google_login():
         firebase_service.add_user(email=email, username=name,photo_url=photo)
         user_data = {"email": email, "username": name, "photo_url": photo}
 
+    session.permanent = True
     session["user"] = user_data    
 
     return jsonify({"success": True})
