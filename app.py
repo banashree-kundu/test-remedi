@@ -346,8 +346,7 @@ def confirmation_page():
 # ---------------- API ----------------
 @app.route("/api/draft/save", methods=["POST"])
 def save_draft():
-    session.permanent = True
-    user_id = session.setdefault("user_id", "demo_user")
+    user_id = session['user']['email']
 
     data = request.json
     if not data:
@@ -359,7 +358,7 @@ def save_draft():
 
 @app.route("/api/draft/load", methods=["GET"])
 def load_draft():
-    user_id = session.get("user_id")
+    user_id = session['user']['email']
     if not user_id:
         return {"draft": None}
 
@@ -374,7 +373,7 @@ def load_draft():
 
 @app.route("/api/activate", methods=["POST"])
 def activate():
-    user_id = session.get("user_id")
+    user_id = session['user']['email']
     if not user_id:
         return {"error": "Not logged in"}, 401
 
@@ -397,7 +396,7 @@ def activate():
 
 @app.route("/api/confirmation/data")
 def confirmation_data():
-    user_id = session.get("user_id")
+    user_id = session['user']['email']
     if not user_id:
         return jsonify({"error": "Not logged in"}), 401
 

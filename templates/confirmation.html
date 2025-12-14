@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/confirmation_v2.css') }}">
-
-
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/confirmation_v2.css') }}">
+
 <div class="conf-container">
     <nav class="breadcrumbs">
         <a href="/">Home</a> /
@@ -48,13 +47,15 @@
         </section>
     </main>
 </div>
-<script src="{{ url_for('static', filename='js/confirmation.js') }}"></script>
-{% endblock %}
+<footer class="conf-footer">
+        <button id="back-btn" class="back-btn conf-btn">← Back to Schedule</button>
+        <div class="conf-footer-main-actions">
+            <button id="save-draft-btn" class="conf-btn conf-btn-draft">Save Draft</button>
+            <button id="activate-btn" class="conf-btn conf-btn-primary">Save & Activate</button>
+        </div>
+</footer>
 
-{% block scripts %}
-    {{ super() }}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <style>
+<style>
 .conf-footer {
     display: flex;
     justify-content: space-between;
@@ -83,11 +84,8 @@
     border-color: white;
 }
 </style>
-<footer class="conf-footer">
-        <button id="back-btn" class="back-btn conf-btn">← Back to Schedule</button>
-        <div class="conf-footer-main-actions">
-            <button id="save-draft-btn" class="conf-btn conf-btn-draft">Save Draft</button>
-            <button id="activate-btn" class="conf-btn conf-btn-primary">Save & Activate</button>
-        </div>
-    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/confirmation.js') }}"></script>
 {% endblock %}
+
