@@ -1,56 +1,92 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("enableNotif");
 
   if (!btn) {
-    console.error("❌ enableNotif not found");
+    console.error("❌ enableNotif button not found");
     return;
   }
 
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const permission = await Notification.requestPermission();
-    console.log("Permission:", permission);
+    try {
+      const permission = await Notification.requestPermission();
+      console.log("Permission:", permission);
 
-    if (permission !== "granted") return;
+      if (permission !== "granted") {
+        alert("Notification permission denied. Please enable it in your browser settings.");
+        return;
+      }
 
-    // Everything AFTER permission is safe
-    const res = await fetch("/api/get_firebase_config");
-    const firebaseConfig = await res.json();
+      // Show loading state
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
 
-    const app = initializeApp(firebaseConfig);
-    const messaging = getMessaging(app);
+      // Fetch Firebase config
+      const res = await fetch("/api/get_firebase_config");
+      const firebaseConfig = await res.json();
 
-    if ("serviceWorker" in navigator) {
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
+
+      // Register service worker
+      if ("serviceWorker" in navigator) {
         await navigator.serviceWorker.register("/static/firebase-messaging-sw.js");
-    }
+      }
 
-    const token = await getToken(messaging, {
-      vapidKey: firebaseConfig.vapidKey
-    });
-
-    await fetch("/save-fcm-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
-    });
-
-    // ✅ REGISTER FOREGROUND HANDLER HERE
-  messaging.onMessage(messaging, (payload) => {
-    console.log("FOREGROUND PAYLOAD:", payload);
-
-    navigator.serviceWorker.ready.then((reg) => {
-      reg.showNotification("Medicine Reminder", {
-        body: `Time to take ${payload.data.med_name}`,
-        icon: "/static/images/titleicon.png",
-        data: payload.data
+      // Get FCM token
+      const token = await getToken(messaging, {
+        vapidKey: firebaseConfig.vapidKey
       });
-    });
-  });
 
-    alert("Notifications enabled ✅");
+      // Save token to backend
+      const saveRes = await fetch("/save-fcm-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token })
+      });
+
+      if (saveRes.ok) {
+        console.log("✅ FCM Token saved:", token);
+        
+        // Mark as enabled
+        btn.classList.add("enabled");
+        btn.classList.add("hidden"); // Hide the button
+        localStorage.setItem('notificationEnabled', 'true');
+        
+        // Set up foreground message handler
+        onMessage(messaging, (payload) => {
+          console.log("FOREGROUND MESSAGE:", payload);
+
+          navigator.serviceWorker.ready.then((reg) => {
+            reg.showNotification("Medicine Reminder", {
+              body: `Time to take ${payload.data.med_name}`,
+              icon: "/static/images/titleicon.png",
+              badge: "/static/images/titleicon.png",
+              data: payload.data,
+              requireInteraction: true,
+              actions: [
+                { action: "taken", title: "Mark as Taken" },
+                { action: "snooze", title: "Snooze 10 min" }
+              ]
+            });
+          });
+        });
+
+        alert("✅ Notifications enabled successfully!");
+      } else {
+        throw new Error("Failed to save token");
+      }
+
+    } catch (error) {
+      console.error("❌ Notification setup failed:", error);
+      alert("Failed to enable notifications. Please try again.");
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }
   });
 });

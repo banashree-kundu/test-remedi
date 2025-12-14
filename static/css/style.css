@@ -492,3 +492,34 @@ footer {
   from { transform: scale(0.6); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
 }
+  /* Bell Icon Notification Button */
+    .notification-bell {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .notification-bell:hover {
+      transform: scale(1.1);
+    }
+
+    .notification-bell svg {
+      width: 24px;
+      height: 24px;
+      fill: #333;
+    }
+
+    .notification-bell.enabled svg {
+      fill: #28a745;
+    }
+
+    /* Hide bell when not needed */
+    .notification-bell.hidden {
+      display: none;
+    }
