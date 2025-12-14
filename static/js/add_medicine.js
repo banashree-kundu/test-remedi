@@ -148,13 +148,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ---------- NEXT BUTTON (Add Medicine → Schedule) ----------
 document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("nextBtn");
+
   if (!nextBtn) return;
 
-  nextBtn.addEventListener("click", async () => {
-    // ensure latest draft is saved
-    await saveMedicineDraft();
+  nextBtn.addEventListener("click", async (e) => {
+    e.preventDefault(); // safety
 
-    // move to schedule page
+    await saveMedicineDraft();  // autosave latest data
+
     window.location.href = "/schedule";
   });
 });
