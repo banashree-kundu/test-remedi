@@ -143,9 +143,10 @@ def save_medicine(user_id, medicine):
 # ---------------------------
 # SAVE SCHEDULE
 # ---------------------------
-def save_schedule(user_id, medicine_id, schedule_data):
+def save_schedule(user_id, medicine_id, med_name,schedule_data):
     db.collection("users").document(user_id).collection("schedules").add({
         "medicine_id": medicine_id,
+        "med_name": med_name,
         "user_id": user_id,
         **schedule_data,
         "is_active": True,

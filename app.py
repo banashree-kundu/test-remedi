@@ -388,6 +388,7 @@ def activate():
         # 2️⃣ Save schedule (linked)
         firebase_service.save_schedule(
             user_id=user_id,
+            med_name=item["medicine"]["name"],
             medicine_id=med_id,
             schedule_data=item["schedule"]
         )
