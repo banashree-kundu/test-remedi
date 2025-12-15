@@ -28,6 +28,13 @@ def home():
         return render_template("home.html", user=session['user'])
 
     return render_template("home.html")
+@app.route('/hydation')
+def hydation():
+    if 'user' not in session:
+        return redirect(url_for('getstarted'))
+    return render_template("HYDRATION.html", user=session['user'])  
+
+    
 @app.route('/about')
 def about():
     return render_template("aboutus.html", user=session['user'] if 'user' in session else None)
