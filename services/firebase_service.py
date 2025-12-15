@@ -214,7 +214,7 @@ def run_inventory_transaction(transaction, sched_ref, user_id):
         # Stock is 0, just log it anyway but don't decrement
         return 0
 
-def get_schedules(email):
+def get_schedules(user_id):
     try:
         # Get all schedules
         schedules_ref = db.collection('users').document(user_id).collection('schedules')
