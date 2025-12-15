@@ -214,6 +214,39 @@ def run_inventory_transaction(transaction, sched_ref, user_id):
         # Stock is 0, just log it anyway but don't decrement
         return 0
 
+def get_schedules(email):
+    try:
+        # Get all schedules
+        schedules_ref = db.collection('users').document(user_id).collection('schedules')
+        schedules = schedules_ref.stream()
+        
+        # Get all medicines
+        medicines_ref = db.collection('users').document(user_id).collection('medicines')
+        medicines = {doc.id: doc.to_dict() for doc in medicines_ref.stream()}
+        
+        result = []
+        for schedule_doc in schedules:
+            schedule_data = schedule_doc.to_dict()
+            schedule_data['id'] = schedule_doc.id
+            
+            # Merge medicine details
+            medicine_id = schedule_data.get('medicine_id')
+            if medicine_id and (medicine_id in medicines):
+                medicine = medicines[medicine_id]
+                schedule_data['dosage'] = medicine.get('dosage')
+                schedule_data['medium'] = medicine.get('medium')
+                schedule_data['food'] = medicine.get('food')
+                schedule_data['notes'] = medicine.get('notes')
+                schedule_data['quantity'] = medicine.get('quantity', 0)
+            
+            result.append(schedule_data)
+        
+        return result
+    except Exception as e:
+        print(f"Error getting schedules: {e}")
+        return []
+
+
 def get_schedules_by_time(time_str):
     docs = db.collection_group('schedules').where('time', '==', time_str).stream()
     return docs

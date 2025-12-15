@@ -374,6 +374,17 @@ def load_draft():
         return {"draft": None}
 
     return {"draft": doc.to_dict()["data"]}
+@app.route('/api/schedules/list', methods=['GET']) 
+def list_schedules(): 
+    if 'user' not in session: 
+        return jsonify({"error": "Unauthorized"}), 401 
+    user_id = session['user']['email'] 
+    try:  
+        schedules = firebase_service.get_schedules(user_id) 
+        return jsonify({"schedules": schedules}) 
+    except Exception as e: 
+        print(f"Error fetching schedules: {e}") 
+        return jsonify({"error": "Failed to fetch schedules"}), 500   
 
 
 
