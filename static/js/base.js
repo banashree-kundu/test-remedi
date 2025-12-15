@@ -22,7 +22,9 @@ if (closeBtn) {
 // 3. Confirm Logout
 if (confirmLogout) {
     confirmLogout.addEventListener("click", () => {
+    
     window.location.href = "/logout";
+
     });
 }
 

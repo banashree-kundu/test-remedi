@@ -129,7 +129,7 @@ def login():
     user = firebase_service.get_user(email)
     if not user:
         firebase_service.add_user(email=email, username=name)
-        user_data = {"email": email, "username": name, "photo_url": decoded.get("picture", "https://ik.imagekit.io/RemediRX/pngwing.com.png?updatedAt=1764494288724")}
+        user_data = {"email": email, "username": name, "photo_url": decoded.get("picture", "https://ik.imagekit.io/RemediRX/pngwing.com.png?updatedAt=1764494288724"),fcm_enabled: False}
 
     session.permanent = True
     session["user"] = user_data
@@ -160,7 +160,7 @@ def google_login():
     if not user_data:
         photo=decoded.get("picture", "https://ik.imagekit.io/RemediRX/pngwing.com.png?updatedAt=1764494288724")
         firebase_service.add_user(email=email, username=name,photo_url=photo)
-        user_data = {"email": email, "username": name, "photo_url": photo}
+        user_data = {"email": email, "username": name, "photo_url": photo,fcm_enabled: False}
 
     session.permanent = True
     session["user"] = user_data    
@@ -315,6 +315,9 @@ def save_fcm_token():
         return jsonify({"success": False, "error": "No token provided"}), 400
 
     firebase_service.save_token(email, token)
+    # ✅ store token presence in session
+    session['user']['fcm_enabled'] = True
+    session.modified = True
     return jsonify({"success": True})
 #  API for "Take Medicine"
 @app.route('/api/mark_taken', methods=['POST'])
