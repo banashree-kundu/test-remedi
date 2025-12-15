@@ -259,6 +259,6 @@ def delete_schedule(user_id, schedule_id):
     except Exception as e:
         print(f"Error deleting schedule {schedule_id}: {e}")
         return False
-def get_schedules_by_time(time_str):
+def get_schedules_by_time(time_str,day):
     docs = db.collection_group('schedules').where('time', '==', time_str).where('days','array_contains',day).stream()
     return docs
