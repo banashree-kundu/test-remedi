@@ -183,7 +183,6 @@ def decrement_inventory_and_log(user_id, schedule_id):
         return jsonify({"status": "success", "remaining_quantity": new_quantity})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 @firestore.transactional
 def run_inventory_transaction(transaction, med_ref, user_id,decrement_quantity,sched_ref):
     # 1. Read the Schedule to find the Medicine Name or Inventory Link
@@ -204,16 +203,19 @@ def run_inventory_transaction(transaction, med_ref, user_id,decrement_quantity,s
         transaction.update(med_ref, {'quantity': new_qty})
         
         # 4. LOG IT (Create a new document in 'logs')
-        log_ref = db.collection('users').document(user_id).collection('logs').document()
-        transaction.get(log_ref)  # Ensure log_ref is included in the transaction
-        transaction.set(log_ref, {
-            'med_name': med_name,
-            'action': 'taken',
-            'timestamp': firestore.SERVER_TIMESTAMP,
-            'schedule_id': sched_ref.id,
-            'quantity_taken': decrement_quantity
+        try:
+            log_ref = db.collection('users').document(user_id).collection('logs').document()
+            transaction.get(log_ref)  # Ensure log_ref is included in the transaction
+            transaction.set(log_ref, {
+                'med_name': med_name,
+                'action': 'taken',
+                'timestamp': firestore.SERVER_TIMESTAMP,
+                'schedule_id': sched_ref.id,
+                'quantity_taken': decrement_quantity
 
-        })
+            })
+        except Exception as e:
+            print(f"Error logging medicine action: {e}")    
         
         return new_qty
     else:
