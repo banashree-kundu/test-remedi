@@ -51,7 +51,7 @@ def extract_medicines(image_url):
     Decode Abbreviations: Translate standard medical shorthand (e.g., "BID" → Morning, Night; "AC" → Before Food; "1-0-1" → Morning, Night).
     Strict Value Mapping: You MUST map input values to the following allowed categories. If the prescription uses a term not listed, pick the closest match or use null.
     times: Array of ["Morning", "Afternoon", "Evening", "Night"].
-    food: Must be exactly "Before Food", "After Food", or "No preference".
+    food: Must be exactly "Before Food", "After Food", or "No preference" if not recognisable get a general preference by searching the (closest accurate) name of the medicine.
     medium: Must be exactly "Tablet", "Capsule", "Syrup", "Drops", or "Injection". (If the medium is an ointment or inhaler, use null).
     Inference Logic:
     If quantity is not explicitly stated, calculate it: (number of times per day) * (quantity_per_dose) * (duration_days).
