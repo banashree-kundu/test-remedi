@@ -2,8 +2,11 @@ from imagekitio import ImageKit
 import requests
 import os
 import base64
-import fitz 
-# Configuration
+import fitz  # PyMuPDF (pip install pymupdf)
+from PIL import Image
+
+
+
 imagekit = ImageKit(private_key=os.environ.get('IMAGEKIT_PRIVATE_KEY'),public_key=os.environ.get('IMAGEKIT_PUBLIC_KEY'),url_endpoint=os.environ.get('IMAGEKIT_URL_ENDPOINT'))
 
 
