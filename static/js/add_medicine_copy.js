@@ -25,7 +25,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   function collectMedicines() {
     return Array.from(document.querySelectorAll(".medicine-card")).map(card => {
       const q = sel => card.querySelector(sel);
+      
+    // Variables to hold our result
+    let times = [];
+    let todSelection = {};
 
+    // 1. Check if any "Time of Day" checkboxes are selected
+    const checkedTods = card.querySelectorAll('.tod-item input[type="checkbox"]:checked');
+
+    if (checkedTods.length > 0) {
+      // --- LOGIC: MULTI-TIME (Time of Day) ---
+      console.log("Saving Multi-Time selection...");
+      
+      checkedTods.forEach(checkbox => {
+        const parent = checkbox.closest('.tod-item');
+        const timeInput = parent.querySelector('input[type="time"]');
+        const timeVal = timeInput ? timeInput.value : ""; // e.g. "08:00"
+
+        if (timeVal) {
+            // Save to Map for UI restoration: { "Morning": "08:00" }
+            todSelection[checkbox.value] = timeVal;
+            // Save to Array for Backend Scheduler: ["08:00"]
+            times.push(timeVal);
+        }
+      });
+
+    } else {
+      // --- LOGIC: SINGLE TIME (Bottom Input) ---
+      console.log("Saving Single-Time selection...");
+      
+      const singleTimeInput = q('[name$="[schedule][time]"]');
+      if (singleTimeInput && singleTimeInput.value) {
+        times.push(singleTimeInput.value);
+      }
+    }
+
+    // Sort times so 08:00 comes before 20:00
+    times.sort();
       return {
         medicine: {
           name: q('[name$="[name]"]')?.value || "",
@@ -39,7 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           start_date: q('[name$="[schedule][start_date]"]')?.value || null,
           duration_days: Number(q('[name$="[schedule][duration]"]')?.value || 0),
           days: JSON.parse(q('[name$="[schedule][days]"]')?.value || "[]"),
-          time: q('[name$="[schedule][time]"]')?.value || null,
+          times: times,           
+          tod_selection: todSelection, 
           quantity_per_dose: Number(q('[name$="[schedule][quantity_per_dose]"]')?.value || 1),
           reminder_enabled: q('[name$="[schedule][reminder]"]')?.checked ?? true,
           snooze_minutes: 10
@@ -187,7 +224,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Schedule fields
       if (q('[name$="[schedule][start_date]"]')) q('[name$="[schedule][start_date]"]').value = data.schedule.start_date || "";
       if (q('[name$="[schedule][duration]"]')) q('[name$="[schedule][duration]"]').value = data.schedule.duration_days || "";
-      if (q('[name$="[schedule][time]"]')) q('[name$="[schedule][time]"]').value = data.schedule.time || "";
+       // --- RESTORE TIMES ---
+      const hasTodData = data.schedule.tod_selection && Object.keys(data.schedule.tod_selection).length > 0;
+
+      if (hasTodData) {
+          // --- SCENARIO: MULTI-TIME ---
+          // Iterate through the saved dictionary { "Morning": "08:00", ... }
+          Object.entries(data.schedule.tod_selection).forEach(([periodLabel, timeVal]) => {
+              // 1. Find the checkbox (e.g., value="Morning")
+              const checkbox = clone.querySelector(`.tod-item input[value="${periodLabel}"]`);
+              
+              if (checkbox) {
+                  // 2. Check it
+                  checkbox.checked = true;
+
+                  // 3. Show the hidden time input next to it
+                  const timeContainer = checkbox.closest('.tod-item').querySelector('.time-input-container');
+                  if (timeContainer) {
+                      timeContainer.style.display = "inline-block";
+                      
+                      // 4. Fill the time value
+                      const timeInput = timeContainer.querySelector('input[type="time"]');
+                      if (timeInput) timeInput.value = timeVal;
+                  }
+              }
+          });
+
+      } else {
+          // --- SCENARIO: SINGLE TIME ---
+          // If we have times saved in the array (e.g. ["14:00"]), put the first one in the bottom input
+          if (data.schedule.times && data.schedule.times.length > 0) {
+              const singleTimeInput = clone.querySelector('[name$="[schedule][time]"]');
+              if (singleTimeInput) {
+                  singleTimeInput.value = data.schedule.times[0];
+              }
+          }
+      }
       if (q('[name$="[schedule][quantity_per_dose]"]')) q('[name$="[schedule][quantity_per_dose]"]').value = data.schedule.quantity_per_dose || 1;
       if (q('[name$="[schedule][reminder]"]')) q('[name$="[schedule][reminder]"]').checked = data.schedule.reminder_enabled ?? true;
 

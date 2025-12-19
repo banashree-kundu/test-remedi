@@ -103,24 +103,24 @@
           <label class="when-taken-label">When should this be taken?</label>
           <div class="meal-group" role="radiogroup" aria-label="When to take medicine">
             <div class="meal-option">
-              <input class="meal-input" type="radio" id="food-before-0" name="med[0][food]" value="Before Food">
-              <label for="food-before-0" class="meal-card">
+              <input class="meal-input" type="radio" id="med-0-food-before" name="med[0][food]" value="Before Food">
+              <label for="med-0-food-before" class="meal-card">
                 <img src="https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a?w=50" alt="Before meal" class="meal-icon">
                 <div class="meal-label">Before Meal</div>
               </label>
             </div>
 
             <div class="meal-option">
-              <input class="meal-input" type="radio" id="food-after-0" name="med[0][food]" value="After Food">
-              <label for="food-after-0" class="meal-card">
+              <input class="meal-input" type="radio" id="med-0-food-after" name="med[0][food]" value="After Food">
+              <label for="med-0-food-after" class="meal-card">
                 <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=50" alt="After meal" class="meal-icon">
                 <div class="meal-label">After Meal</div>
               </label>
             </div>
 
             <div class="meal-option">
-              <input class="meal-input" type="radio" id="food-none-0" name="med[0][food]" value="No preference" checked>
-              <label for="food-none-0" class="meal-card">
+              <input class="meal-input" type="radio" id="med-0-food-none" name="med[0][food]" value="No preference" >
+              <label for="med-0-food-none" class="meal-card">
                 <div class="meal-label">Any Time</div>
               </label>
             </div>
@@ -175,7 +175,7 @@
 
           <hr class="divider">
 
-          <h4 class="schedule-title">⏰ Schedule</h4>
+          <h3 class="schedule-title">⏰ Schedule</h3>
 
           <label>Start Date</label>
           <input type="date" name="med[0][schedule][start_date]">
@@ -188,13 +188,13 @@
 
           <label>Days of Week</label>
           <div class="days-of-week">
+            <button type="button" class="day" data-day="sun">S</button>
             <button type="button" class="day" data-day="mon">M</button>
             <button type="button" class="day" data-day="tue">T</button>
             <button type="button" class="day" data-day="wed">W</button>
             <button type="button" class="day" data-day="thu">T</button>
             <button type="button" class="day" data-day="fri">F</button>
             <button type="button" class="day" data-day="sat">S</button>
-            <button type="button" class="day" data-day="sun">S</button>
           </div>
 
           <input type="hidden" name="med[0][schedule][days]">
@@ -202,16 +202,13 @@
           <label>Time (IST)</label>
           <input type="time" name="med[0][schedule][time]">
 
-          <label>Reminder Options</label>
+          <label>Reminder Option</label>
           <div class="reminder-options">
             <div class="reminder-checkbox-group">
               <input type="checkbox" id="push-notif-0" name="med[0][schedule][reminder]" checked>
               <label for="push-notif-0">📱 Push Notification</label>
             </div>
-            <div class="reminder-checkbox-group">
-              <input type="checkbox" id="email-notif-0" name="med[0][schedule][email_reminder]">
-              <label for="email-notif-0">📧 Email Notification</label>
-            </div>
+
           </div>
 
         </div>

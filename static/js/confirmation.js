@@ -28,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
         medicines.forEach((item, index) => {
             const wrapper = document.createElement("div");
             wrapper.className = "medicine-item";
-
+            // *** CHANGE 1: Display multiple times ***
+            // Use the 'times' array and join its elements with a comma.
+            const timesDisplay = item.schedule.times && item.schedule.times.length > 0
+                ? item.schedule.times.join(", ")
+                : "Not set";
             wrapper.innerHTML = `
                 <button class="medicine-header" type="button">
                     <div>
@@ -46,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? item.schedule.days.join(", ")
                         : "—"
                     }</div>
-                    <div><b>Time:</b> ${item.schedule.time || "—"}</div>
+                    <div><b>Times:</b> ${timesDisplay}</div>
                     <div><b>Quantity per dose:</b> ${item.schedule.quantity_per_dose}</div>
                     <div><b>Total remaining:</b> ${item.medicine.quantity}</div>
                     <div><b>Medium:</b> ${item.medicine.medium || "—"}</div>
@@ -80,12 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSummary() {
         totalMedEl.innerText = medicines.length;
 
-        // Total reminders per day = sum of quantity_per_dose
-        const totalPerDay = medicines.reduce(
-            (sum, m) => sum + (m.schedule.quantity_per_dose || 0),
+        
+        // *** CHANGE 2: Calculate reminders based on the number of times per day ***
+        // Total reminders = sum of the length of the 'times' array for each medicine.
+        const totalReminders = medicines.reduce(
+            (sum, m) => sum + (m.schedule.times?.length || 0),
             0
         );
-        remindersDayEl.innerText = totalPerDay;
+        remindersDayEl.innerText = totalReminders;
 
         // Start date = earliest start
         const startDates = medicines
@@ -133,7 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: medicines.map(m => m.medicine.name),
                 datasets: [{
-                    data: medicines.map(() => 1),
+                    label: 'Reminders per Day',
+                    // Use the length of the times array to determine slice size
+                    data: medicines.map(m => m.schedule.times?.length || 0),
                     backgroundColor: [
                         '#4c8bfd',
                         '#22c55e',

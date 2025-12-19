@@ -227,7 +227,7 @@ def check_reminders_route():
     global cron_running
     # 1. Get India Time
     ist = pytz.timezone('Asia/Kolkata')
-    day=datetime.now(ist).strftime('%A')[:3].lower() # e.g., "Monday"
+    day=datetime.now(ist).strftime('%A')[:3].lower() # e.g., "Monday" --> "mon"
     now_str = datetime.now(ist).strftime('%H:%M') # e.g., "14:30"
     print("CRON HIT:", now_str, day)
 
