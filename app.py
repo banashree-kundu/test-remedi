@@ -522,7 +522,7 @@ def removefcm():
     token = data.get("token")
     user_id=session['user']['email']
     if token:
-        firebase_service.remove_fcm_token(token,user_id)
+        firebase_service.remove_fcm_token(token)
         return jsonify({"status": "removed"}),200
     else:
         return jsonify({"error": "No token provided"}),400
