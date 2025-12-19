@@ -36,6 +36,10 @@ async function performLogout() {
         });
         if (response.ok) {
             localStorage.removeItem("fcm_token");
+            if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for(let r of regs) await r.unregister();
+        }
             window.location.href = "/logout";
         }
         else{window.location.href = "/logout";}
