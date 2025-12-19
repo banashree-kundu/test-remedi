@@ -541,7 +541,7 @@ def upload_prescription():
 
     user_id = session['user']['email']
     firebase_service.upload_prescription(user_id,image_url)
-    return jsonify({"status": "success"}), 200
+    return jsonify({"success":True}), 200
 
 
 @app.route('/remove-fcm-token',methods=['GET','POST'])
