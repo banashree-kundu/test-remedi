@@ -68,6 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
+     // If already enabled, do nothing
+    if (btn.classList.contains("enabled")) {
+        return;
+    }
 
     try {
       const permission = await Notification.requestPermission();

@@ -519,7 +519,7 @@ def removefcm():
         firebase_service.remove_fcm_token(token)
         return jsonify({"status": "removed"}),200
     else:
-        return redirect('/logout')    
+        return jsonify({"error": "No token provided"}),400
 
 if __name__ == '__main__':
     app.run(debug=True)
